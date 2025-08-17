@@ -1,0 +1,128 @@
+:root {
+  --header-h: 56px;
+  --bottom-h: 56px; /* set to 0 if your BottomNav is not fixed */
+}
+
+.tiktok-feed {
+  height: 100svh;              /* mobile-safe viewport units */
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #fff;
+  overflow: hidden;            /* ensure only the feed scrolls */
+}
+
+/* ===== Header ===== */
+.tiktok-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 12px;
+  border-radius: 22px;
+  flex: 1;
+}
+.search-icon { color: #aaa; }
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 100%;
+}
+
+/* ===== Feed scroll area ===== */
+.video-feed {
+  position: relative;
+  /* exact remaining height under header and above bottom-nav */
+  height: calc(100svh - var(--header-h) - var(--bottom-h));
+  margin-top: var(--header-h);
+  margin-bottom: var(--bottom-h);
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* each card fills the scroll area */
+.video-card {
+  position: relative;
+  height: 100%;
+  scroll-snap-align: start;
+  overflow: hidden;
+}
+
+/* the <video> itself */
+.videoEl {
+  display: block;          /* remove inline video baseline gap */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* TikTok fill */
+  background: #000;
+}
+
+/* ===== Overlays ===== */
+.video-info {
+  position: absolute;
+  left: 14px;
+  bottom: 100px;          /* sits above the bottom nav & actions */
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 10px;
+  align-items: center;
+  max-width: min(600px, 88vw);
+}
+
+.avatar {
+  grid-row: span 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.video-meta .username { font-weight: 700; font-size: 15px; }
+.video-meta .title    { font-size: 14px; opacity: .95; }
+.video-meta .sub      { font-size: 12px; opacity: .7; }
+
+/* Floating actions on the right (container wrapper) */
+.actions-wrap {
+  position: absolute;
+  right: 14px;
+  bottom: 100px;          /* aligns with video-info */
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* heart animation */
+.heart {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  transition: transform .25s ease;
+  font-size: 84px;
+  opacity: .85;
+  z-index: 4;
+}
+.heart.show { transform: translate(-50%,-50%) scale(1); }
