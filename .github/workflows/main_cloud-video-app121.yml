@@ -11,39 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Setup Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
 
-      # Install dependencies
       - name: Install dependencies
         run: |
           cd app-backend
           npm install
 
-      # (Optional) Build step – only if you have a build script
       - name: Build project
         run: |
           cd app-backend
           npm run build --if-present
 
-      # (Optional) Run tests if you have them
       - name: Run tests
         run: |
           cd app-backend
           npm test --if-present
 
-      # Deploy to Azure Web App
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'cloud-video-app121'   # your Azure app name
+          app-name: 'cloud-video-app121'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: app-backend
