@@ -34,10 +34,16 @@ jobs:
           cd app-backend
           npm test --if-present
 
+      # ✅ NEW: Login to Azure using publish profile
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+
+      # ✅ Deploy to Azure
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'cloud-video-app121'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: app-backend
