@@ -17,10 +17,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // CORS
-app.use(cors({
-  origin: CLIENT_ORIGIN?.split(',').map(s => s.trim()) || '*',
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN?.split(',').map((s) => s.trim()) || '*',
+    credentials: true,
+  })
+);
 
 // Parsers
 app.use(express.json({ limit: '2mb' }));
@@ -32,15 +34,24 @@ app.use(morgan('dev'));
 // Static (optional thumbnail exposure)
 app.use('/uploads', express.static(path.resolve(__dirname, UPLOAD_DIR)));
 
-// API
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
 
-// Health
+// Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// Start
+// ✅ Serve frontend React build (important for deployment)
+const frontendPath = path.join(__dirname, 'build');
+app.use(express.static(frontendPath));
+
+// ✅ Catch-all route (fixes path-to-regexp crash in Express v5)
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Start server
 (async () => {
   try {
     if (!MONGODB_URI) {
@@ -49,10 +60,9 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
     }
     await mongoose.connect(MONGODB_URI);
     console.log('✅ MongoDB connected');
-
-    // ✅ Use Azure's dynamic port if available
-    const port = process.env.PORT || PORT || 8080;
-    app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on port ${PORT}`)
+    );
   } catch (err) {
     console.error('❌ Startup error:', err);
     process.exit(1);
