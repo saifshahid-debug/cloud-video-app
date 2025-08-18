@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'   # Vite requires >=20
 
       - name: Install and Build
         working-directory: app-frontend
@@ -31,4 +31,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "app-frontend"
-          output_location: "build"
+          output_location: "dist"   # 👈 Vite outputs to dist
