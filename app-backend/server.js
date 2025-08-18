@@ -38,7 +38,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
 
 // Health
-app.get('/api/health', (_req,res)=>res.json({ ok:true }));
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 // Start
 (async () => {
@@ -49,7 +49,10 @@ app.get('/api/health', (_req,res)=>res.json({ ok:true }));
     }
     await mongoose.connect(MONGODB_URI);
     console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+    // ✅ Use Azure's dynamic port if available
+    const port = process.env.PORT || PORT || 8080;
+    app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
   } catch (err) {
     console.error('❌ Startup error:', err);
     process.exit(1);
